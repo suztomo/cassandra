@@ -280,7 +280,7 @@ public class RepairRunnable extends WrappedRunnable implements ProgressEventNoti
                                                              totalProgress,
                                                              message));
                 }
-            });
+            }, MoreExecutors.directExecutor());
             futures.add(session);
         }
 
@@ -289,7 +289,7 @@ public class RepairRunnable extends WrappedRunnable implements ProgressEventNoti
         final Collection<Range<Token>> successfulRanges = new ArrayList<>();
         final AtomicBoolean hasFailure = new AtomicBoolean();
         final ListenableFuture<List<RepairSessionResult>> allSessions = Futures.successfulAsList(futures);
-        ListenableFuture anticompactionResult = Futures.transform(allSessions, new AsyncFunction<List<RepairSessionResult>, Object>()
+        ListenableFuture anticompactionResult = Futures.transformAsync(allSessions, new AsyncFunction<List<RepairSessionResult>, Object>()
         {
             @SuppressWarnings("unchecked")
             public ListenableFuture apply(List<RepairSessionResult> results)
@@ -308,7 +308,7 @@ public class RepairRunnable extends WrappedRunnable implements ProgressEventNoti
                 }
                 return ActiveRepairService.instance.finishParentSession(parentSession, allNeighbors, successfulRanges);
             }
-        });
+        }, MoreExecutors.directExecutor());
         Futures.addCallback(anticompactionResult, new FutureCallback<Object>()
         {
             public void onSuccess(Object result)
@@ -356,7 +356,7 @@ public class RepairRunnable extends WrappedRunnable implements ProgressEventNoti
                 }
                 executor.shutdownNow();
             }
-        });
+        }, MoreExecutors.directExecutor());
     }
 
     private void addRangeToNeighbors(List<Pair<Set<InetAddress>, ? extends Collection<Range<Token>>>> neighborRangeList, Range<Token> range, Set<InetAddress> neighbors)
