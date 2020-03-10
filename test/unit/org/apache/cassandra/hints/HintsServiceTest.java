@@ -17,6 +17,7 @@
  */
 package org.apache.cassandra.hints;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import java.net.InetAddress;
 import java.util.Collections;
 import java.util.UUID;
@@ -125,7 +126,7 @@ public class HintsServiceTest
             {
                 HintsService.instance.resumeDispatch();
             }
-        });
+        }, MoreExecutors.directExecutor());
 
         Futures.allAsList(
                 noMessagesWhilePaused,

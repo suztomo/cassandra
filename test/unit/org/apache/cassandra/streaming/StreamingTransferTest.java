@@ -17,6 +17,7 @@
  */
 package org.apache.cassandra.streaming;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -125,7 +126,7 @@ public class StreamingTransferTest
             {
                 fail();
             }
-        });
+        }, MoreExecutors.directExecutor());
         // should be complete immediately
         futureResult.get(100, TimeUnit.MILLISECONDS);
     }
